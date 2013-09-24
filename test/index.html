@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width,height=device-height,user-scalable=no,maximum-scale=1.0,initial-scale=1.0" />
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8"> <!-- ISO-8859-1 -->
+    <link rel="stylesheet" href="master.css" type="text/css" media="screen" title="no title" charset="utf-8">
+    <script type="text/javascript" src="xface.js"></script>
+    <script type="text/javascript" charset="utf-8">
+
+      var source = "http://www.polyvi.net:8012/develop/TrafficStats/chmdecoder.zip";
+      var target = "chmdecoder.zip";
+      var targe_relative = "/sdcard/download/chmdecoder.zip";
+      var target_absolute = "file://sdcard/download/chmdecoder.zip";
+      var err_source = "http://www.polyvi.net:8012/develop/TrafficStats/chmdecoder.zip_err";
+      var source_nohttp = "https://www.polyvi.net:8012/develop/TrafficStats/chmdecoder.zip";
+      var err_target = "http://sdcard/download/chmdecoder.zip"
+
+      function download(sourcefile, targetfile){
+        var fileTransfer = new xFace.AdvancedFileTransfer(sourcefile, targetfile);
+        fileTransfer.onprogress = downloadUpdate;
+        fileTransfer.download(downloadSuccess, downloadFail);
+      };
+
+      function pause(sourcefile, targetfile){
+        var fileTransfer = new xFace.AdvancedFileTransfer(sourcefile, targetfile);
+        fileTransfer.pause();
+      };
+
+      function cancel(sourcefile, targetfile){
+        var fileTransfer = new xFace.AdvancedFileTransfer(sourcefile, targetfile);
+        fileTransfer.cancel();
+      };
+
+      function downloadSuccess(result){
+          var res = "file: " + result.name + " has been downloaded";
+          document.getElementById('status').innerText = "download successfully";
+          document.getElementById('result').innerText = res;
+      };
+
+      function downloadUpdate(result){
+          var res = result.name + " total size:" + result.total + "	completeSize:" + result.loaded;
+          document.getElementById('status').innerText = "downloading";
+          document.getElementById('result').innerText = res;
+      };
+
+      function downloadFail(result){
+        var res = "result code " + result.code;
+        document.getElementById('status').innerText = "fail";
+        document.getElementById('result').innerText = res;
+      };
+
+    </script>
+  </head>
+
+  <body id="stage" class="theme">
+    <h1>AdvancedFileTransfer</h1>
+    <div id="descr">
+          测试目的：文件下载统计<br/>
+          1：点击Download using relative path1按钮，使用相对路径chmdecoder.zip作为下载目的地址<br/>
+          2：点击Download using relative path2按钮，使用相对路径/sdcard/download/chmdecoder.zip作为下载目的地址<br/>
+          3：点击Download using absolute path按钮，使用绝对路径/sdcard/download/chmdecoder.zip作为下载目的地址<br/>
+          4：点击Download using error source uri按钮，使用错误uri作为源地址，返回fail， 错误代码: code 3<br/>
+          5：点击Download using error target path按钮，使用错误路径作为目的地址，返回fail， 错误代码: code 1<br/>
+          6：点击Download using source uri whithout http按钮，使用不含 http的uri作为源地址，返回fail， 错误代码: code 2<br/>
+    </div>
+    <div id="info">
+      status: <span id="status"></span><br/>
+      result: <span id="result"></span><br/>
+    </div>
+      <div class="btn large" onclick="download(source, target);">Download using relative path1</div>
+      <div class="btn large" onclick="pause(source, target);">Pause using relative path1</div>
+      <div class="btn large" onclick="cancel(source, target);">Cancel using relative path1</div>
+      <div class="btn large" onclick="download(source, targe_relative);">Download using relative path2</div>
+      <div class="btn large" onclick="pause(source, targe_relative);">Pause using relative path2</div>
+      <div class="btn large" onclick="cancel(source, targe_relative);">Cancel using relative path2</div>
+      <div class="btn large" onclick="download(source, target_absolute);">Download using absolute path</div>
+      <div class="btn large" onclick="pause(source, target_absolute);">Pause using absolute path</div>
+      <div class="btn large" onclick="cancel(source, target_absolute);">Cancel using absolute path</div>
+      <div class="btn large" onclick="download(err_source, target_absolute);">Download using error source uri</div>
+      <div class="btn large" onclick="download(source, err_target);">Download using error target path</div>
+      <div class="btn large" onclick="download(source_nohttp, target);">Download using source uri whithout http</div>
+  </body>
+</html>

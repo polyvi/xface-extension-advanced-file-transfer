@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        id="com.polyvi.xface.extension.advancedfiletransfer"
+        version="1.0.0">
+
+    <name>AdvancedFileTransfer</name>
+    <author>PolyVi Inc.</author>
+    <keywords>xface, advancedfiletransfer</keywords>
+    <license>Apache 2.0</license>
+    <description>xFace AdvancedFileTransfer extension</description>
+
+    <js-module src="www/AdvancedFileTransfer.js" name="AdvancedFileTransfer">
+        <clobbers target="window.xFace.AdvancedFileTransfer" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="AdvancedFileTransfer">
+                <param name="android-package" value="com.polyvi.xface.extension.advancedfiletransfer.AdvancedFileTransfer"/>
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+        </config-file>
+        <source-file src="src/android/AdvancedFileTransfer.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileDownloader.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileDownloadInfo.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileTransferManager.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileTransferRecorder.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/IFileTransfer.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/IFileTransferListener.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+    </platform>
+</plugin>
