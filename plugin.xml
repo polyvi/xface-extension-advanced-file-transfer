@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.polyvi.xface.extension.advancedfiletransfer"
+    version="1.0.0">
+    <name>AdvancedFileTransfer</name>
+    <author>PolyVi Inc.</author>
+    <description>xFace AdvancedFileTransfer Extension</description>
+    <license>GPLv3</license>
+    <keywords>cordova, xface, advanced filetransfer</keywords>
+
+    <js-module name="AdvancedFileTransfer" src="www/AdvancedFileTransfer.js">
+        <clobbers target="window.xFace.AdvancedFileTransfer" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file parent="/*" target="res/xml/config.xml">
+            <feature name="">
+                <param name="" value="" />
+            </feature>
+        </config-file>
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="" />
+        </config-file>
+        <source-file src="" target-dir="" />
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+        <config-file parent="/*" target="config.xml">
+            <feature name="AdvancedFileTransfer">
+                <param name="ios-package" value="XAdvancedFileTransferExt" />
+            </feature>
+        </config-file>
+        <header-file src="src/ios/XAdvancedFileTransferExt.h" />
+        <source-file src="src/ios/XAdvancedFileTransferExt.m" />
+        <header-file src="src/ios/XFileDownloadInfo.h" />
+        <source-file src="src/ios/XFileDownloadInfo.m" />
+        <header-file src="src/ios/XFileDownloadInfoRecorder.h" />
+        <source-file src="src/ios/XFileDownloadInfoRecorder.m" />
+        <header-file src="src/ios/XFileDownloadListener.h" />
+        <header-file src="src/ios/XFileDownloader.h" />
+        <source-file src="src/ios/XFileDownloader.m" />
+        <header-file src="src/ios/XFileDownloaderDelegate.h" />
+        <source-file src="src/ios/XFileDownloaderDelegate.m" />
+        <header-file src="src/ios/XFileDownloaderManager.h" />
+        <source-file src="src/ios/XFileDownloaderManager.m" />
+    </platform>
+
+    <dependency id="org.apache.cordova.file" url="git://git.apache.org/cordova-plugin-file.git"/>
+
+</plugin>
