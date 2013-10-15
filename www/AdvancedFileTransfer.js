@@ -1,4 +1,4 @@
-cordova.define("com.polyvi.xface.extension.advancedfiletransfer.AdvancedFileTransfer", function(require, exports, module) {
+
 /*
  Copyright 2012-2013, Polyvi Inc. (http://www.xface3.com)
  This program is distributed under the terms of the GNU General Public License.
@@ -27,7 +27,7 @@ cordova.define("com.polyvi.xface.extension.advancedfiletransfer.AdvancedFileTran
 
   var exec = require('cordova/exec');
   var argscheck = require('cordova/argscheck');
-  var FileEntry = require('org.apache.cordova.core.file.FileEntry');
+  var FileEntry = require('org.apache.cordova.file.FileEntry');
 
   var AdvancedFileTransfer = function(source, target, isUpload){
     this.source = source;
@@ -112,4 +112,3 @@ cordova.define("com.polyvi.xface.extension.advancedfiletransfer.AdvancedFileTran
   };
 
   module.exports = AdvancedFileTransfer;
-});
