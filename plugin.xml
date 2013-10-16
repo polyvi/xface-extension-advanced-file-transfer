@@ -8,7 +8,6 @@
     <description>xFace AdvancedFileTransfer Extension</description>
     <license>GPLv3</license>
     <keywords>cordova, xface, advanced filetransfer</keywords>
-
     <js-module name="AdvancedFileTransfer" src="www/AdvancedFileTransfer.js">
         <clobbers target="window.xFace.AdvancedFileTransfer" />
     </js-module>
@@ -48,6 +47,27 @@
         <source-file src="src/ios/XFileDownloaderManager.m" />
     </platform>
 
+    <!-- wp8 -->
+    <platform name="wp8">
+        <config-file parent="/*" target="config.xml">
+            <feature name="AdvancedFileTransfer">
+                <param name="wp-package" value="AdvancedFileTransfer"/>
+            </feature>
+        </config-file>
+
+        <config-file target="Properties/WMAppManifest.xml" parent="/Deployment/App/Capabilities">
+            <Capability Name="ID_CAP_NETWORKING"/>
+        </config-file>
+
+        <source-file src="src/wp/XAdvancedFileTransferExt.cs" />
+        <source-file src="src/wp/XFileDownloader.cs" />
+        <source-file src="src/wp/XFileDownloadInfo.cs" />
+        <source-file src="src/wp/XFileTransferManager.cs" />
+        <source-file src="src/wp/XFileTransferRecorder.cs" />
+        <source-file src="src/wp/XIFileTransfer.cs" />
+        <source-file src="src/wp/XIFileTransferListener.cs" />
+    </platform>
     <dependency id="org.apache.cordova.file" url="git://git.apache.org/cordova-plugin-file.git"/>
+    <dependency id="org.apache.cordova.file-transfer" url="git://git.apache.org/cordova-plugin-file-transfer.git"/>
 
 </plugin>
