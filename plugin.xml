@@ -14,15 +14,23 @@
 
     <!-- android -->
     <platform name="android">
-        <config-file parent="/*" target="res/xml/config.xml">
-            <feature name="">
-                <param name="" value="" />
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="AdvancedFileTransfer">
+                <param name="android-package" value="com.polyvi.xface.extension.advancedfiletransfer.AdvancedFileTransfer"/>
             </feature>
         </config-file>
-        <config-file parent="/*" target="AndroidManifest.xml">
-            <uses-permission android:name="" />
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.INTERNET" />
+            <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+            <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
         </config-file>
-        <source-file src="" target-dir="" />
+        <source-file src="src/android/AdvancedFileTransfer.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileDownloader.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileDownloadInfo.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileTransferManager.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileTransferRecorder.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/IFileTransfer.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/IFileTransferListener.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
     </platform>
 
     <!-- ios -->
