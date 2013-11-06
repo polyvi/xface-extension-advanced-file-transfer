@@ -121,6 +121,9 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         XPathResolver pathResolver = new XPathResolver(filePath,
                 ((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
         String path = pathResolver.resolve();
+        if(null == path){
+            throw new FileNotFoundException();
+        }
         File file = new File(path);
         file.getParentFile().mkdirs();
         mFileTransferManager.addFileTranferTask(url, file.getCanonicalPath(),

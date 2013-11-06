@@ -266,6 +266,8 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
             String absolutePath = file.getAbsolutePath();
             fullPath = file.getAbsolutePath();
             fileName = file.getName();
+            jsonObj.put("isDirectory", file.isDirectory());
+            jsonObj.put("isFile", file.isFile());
             jsonObj.put("name", fileName);
             jsonObj.put("fullPath", fullPath);
             jsonObj.put("start", 0);
