@@ -70,12 +70,12 @@
     if (!url)
     {
         errorCode = INVALID_URL_ERR;
-        XLogE(@"Advanced File Transfer Error: Invalid server URL");
+        ALog(@"Advanced File Transfer Error: Invalid server URL");
     }
     else if(![file isFileURL])
     {
         errorCode = FILE_NOT_FOUND_ERR;
-        XLogE(@"Advanced File Transfer Error: Invalid file path or URL");
+        ALog(@"Advanced File Transfer Error: Invalid file path or URL");
     }
 
     if(errorCode > 0)

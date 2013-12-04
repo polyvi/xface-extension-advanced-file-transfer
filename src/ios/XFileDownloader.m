@@ -177,7 +177,7 @@
     BOOL ret = [XFileUtils moveItemAtPath:tempFilePath toPath:self->localFilePath error:&error];
     if(!ret && error)
     {
-        XLogE(@"Failed to move temp file at path:%@ to path:%@ with error:%@", tempFilePath, self->localFilePath, [error localizedDescription]);
+        ALog(@"Failed to move temp file at path:%@ to path:%@ with error:%@", tempFilePath, self->localFilePath, [error localizedDescription]);
     }
 
     //FIXME:我们认为在上述情况下不应出现重命名失败的问题，如果实际应用中的确还会发生ret为NO的情况，则考虑添加自定义错误码
