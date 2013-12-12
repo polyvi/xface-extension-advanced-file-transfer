@@ -27,26 +27,26 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
         waitsFor(function() { return spy.wasCalled; }, Tests.TEST_TIMEOUT);
     };
 
-    it("should exist", function() {
+    it("advancedtransfer.spec.1 should exist xFace.AdvancedFileTransfer object", function() {
         expect(xFace.AdvancedFileTransfer).toBeDefined();
     });
 
-    it("should exist and be constructable", function() {
+    it("advancedtransfer.spec.2 should exist and be constructable", function() {
         var aft = new xFace.AdvancedFileTransfer(download_source,download_target);
         expect(aft).toBeDefined();
     });
 
-    it("should contain a download function", function() {
+    it("advancedtransfer.spec.3 should contain a download function", function() {
         var download_aft = new xFace.AdvancedFileTransfer(download_source,download_target);
         expect(typeof download_aft.download).toBe('function');
     });
 
-    it("should contain a pause function", function() {
+    it("advancedtransfer.spec.4 should contain a pause function", function() {
         var aft = new xFace.AdvancedFileTransfer(download_source,download_target);
         expect(typeof aft.pause).toBe('function');
     });
 
-    it("should contain a cancel function", function() {
+    it("advancedtransfer.spec.5 should contain a cancel function", function() {
         var aft = new xFace.AdvancedFileTransfer(download_source,download_target);
         expect(typeof aft.cancel).toBe('function');
     });
@@ -59,7 +59,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             expect(lastProgressEvent.loaded).toBeGreaterThan(1);
         });
 
-        it("should be able to download a file using http", function() {
+        it("advancedtransfer.spec.6 should be able to download a file using http", function() {
             this.after(function() {
                 deleteFile(download_target);
             });
@@ -73,7 +73,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             waitsForAny(downloadWin, fail, 10000);
          });
 
-        it("should be able to download a file using http after pause", function() {
+        it("advancedtransfer.spec.7 should be able to download a file using http after pause", function() {
             this.after(function() {
                 deleteFile(download_target);
             });
@@ -92,7 +92,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             waitsForAny(downloadWin, fail, 10000);
          });
 
-        it("should be stopped by pause() ", function() {
+        it("advancedtransfer.spec.8 should be stopped by pause() ", function() {
             var aft = new xFace.AdvancedFileTransfer(download_source,download_target);
             var downloadWin = createDoNotCallSpy('downloadWin');
             var downloadFail = jasmine.createSpy().andCallFake(function(e) {
@@ -108,7 +108,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             });
          });
 
-        it("should be stopped by cancel()", function() {
+        it("advancedtransfer.spec.9 should be stopped by cancel()", function() {
             var aft = new xFace.AdvancedFileTransfer(download_source,download_target);
             var downloadWin = createDoNotCallSpy('downloadWin');
             var downloadFail = jasmine.createSpy().andCallFake(function(e) {
@@ -124,7 +124,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             });
          });
 
-        it("should get http status on failure", function() {
+        it("advancedtransfer.spec.10 should get http status on failure", function() {
             var downloadWin = createDoNotCallSpy('downloadWin');
             var remoteFile = download_source + "/404";
             var downloadFail = jasmine.createSpy().andCallFake(function(error) {
@@ -140,7 +140,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             waitsForAny(downloadWin, downloadFail);
         });
 
-        it("should handle malformed urls", function() {
+        it("advancedtransfer.spec.11 should handle malformed urls", function() {
             var downloadWin = createDoNotCallSpy('downloadWin');
             var remoteFile = getMalformedUrl();
             var downloadFail = jasmine.createSpy().andCallFake(function(error) {
@@ -159,7 +159,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             waitsForAny(downloadWin, downloadFail);
         });
 
-        it("should handle unknown host", function() {
+        it("advancedtransfer.spec.12 should handle unknown host", function() {
             var downloadWin = createDoNotCallSpy('downloadWin');
             var remoteFile = "http://192.168.3.123/index.html";
             var localFileName = remoteFile.substring(remoteFile.lastIndexOf('/')+1);
@@ -174,7 +174,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             waitsForAny(downloadWin, downloadFail, 62000);
         });
 
-        it("should handle bad file path", function() {
+        it("advancedtransfer.spec.13 should handle bad file path", function() {
             var downloadWin = createDoNotCallSpy('downloadWin');
             var badFilePath = "c:\\54321";
             var downloadFail = jasmine.createSpy().andCallFake(function(error) {
