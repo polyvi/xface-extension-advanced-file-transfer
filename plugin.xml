@@ -75,7 +75,7 @@
         <source-file src="src/wp/XIFileTransfer.cs" />
         <source-file src="src/wp/XIFileTransferListener.cs" />
     </platform>
-    <dependency id="org.apache.cordova.file" url="git://git.apache.org/cordova-plugin-file.git"/>
-    <dependency id="org.apache.cordova.file-transfer" url="git://git.apache.org/cordova-plugin-file-transfer.git"/>
+    <dependency id="org.apache.cordova.file"/>
+    <dependency id="org.apache.cordova.file-transfer"/>
 
 </plugin>
