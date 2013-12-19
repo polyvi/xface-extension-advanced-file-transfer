@@ -8,7 +8,7 @@ using xFaceLib.extensions.advancedFileTransfer;
 
 namespace WPCordovaClassLib.Cordova.Commands
 {
-    public class AdvancedFileTransfer : BaseCommand
+    public class AdvancedFileTransfer : XBaseCommand
     {
         private static String COMMAND_DOWNLOAD = "download";
 
@@ -44,17 +44,20 @@ namespace WPCordovaClassLib.Cordova.Commands
                 return;
             }
 
-            String abstarget = XUtils.BuildabsPathOnIsolatedStorage(filePath);
-            if (!url.StartsWith("http://"))
+            string workspace = this.app.GetWorkSpace();
+            string target = XUtils.ResolvePath(workspace, filePath);
+            if (null == target)
             {
-                FileTransfer.FileTransferError error = new FileTransfer.FileTransferError(INVALID_URL_ERR, url, filePath, 0);
+                FileTransfer.FileTransferError error = new FileTransfer.FileTransferError(FILE_NOT_FOUND_ERR, url, filePath, 0);
                 PluginResult result = new PluginResult(PluginResult.Status.ERROR, error);
                 DispatchCommandResult(result);
                 return;
             }
-            if (filePath.Contains(":"))
+
+            String abstarget = XUtils.BuildabsPathOnIsolatedStorage(target);
+            if (!url.StartsWith("http://"))
             {
-                FileTransfer.FileTransferError error = new FileTransfer.FileTransferError(FILE_NOT_FOUND_ERR, url, filePath, 0);
+                FileTransfer.FileTransferError error = new FileTransfer.FileTransferError(INVALID_URL_ERR, url, filePath, 0);
                 PluginResult result = new PluginResult(PluginResult.Status.ERROR, error);
                 DispatchCommandResult(result);
                 return;
@@ -65,7 +68,7 @@ namespace WPCordovaClassLib.Cordova.Commands
                 DispatchCommandResult(result, callbackId);
             };
 
-            FileTransferManager.AddFileTranferTask(url, abstarget,
+            FileTransferManager.AddFileTranferTask(url, abstarget, workspace,
                     DispatchPluginResult, COMMAND_DOWNLOAD);
         }
 

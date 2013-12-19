@@ -51,10 +51,10 @@ namespace xFaceLib.extensions.advancedFileTransfer
         /// <param name="target">下载时表示存储下载文件的本地地址，上传时表示要上传的服务器地址</param>
         /// <param name="DispatchPluginResult">事件派发</param>
         /// <param name="type">传输的类型(上传或下载两种)</param>
-        public void AddFileTranferTask(String source, String target,
+        public void AddFileTranferTask(String source, String target, String appWorkSpace,
                 EventHandler<PluginResult> DispatchPluginResult, String type)
         {
-            XIFileTransfer fileTransfer = GetFileTransfer(source, target, type);
+            XIFileTransfer fileTransfer = GetFileTransfer(source, target, appWorkSpace, type);
 
             fileTransfer.DispatchPluginResult += DispatchPluginResult;
             if(!HashMapFileTransfers.ContainsValue(fileTransfer))
@@ -71,7 +71,7 @@ namespace xFaceLib.extensions.advancedFileTransfer
         /// <param name="target">下载时表示存储下载文件的本地地址，上传时表示要上传的服务器地址</param>
         /// <param name="type">传输的类型(上传或下载两种)</param>
         /// <returns></returns>
-        private XIFileTransfer GetFileTransfer(String source, String target, String type)
+        private XIFileTransfer GetFileTransfer(String source, String target, String appworkSpace, String type)
         {
             XIFileTransfer fileTransfer = null;
             HashMapFileTransfers.TryGetValue(source, out fileTransfer);
@@ -79,7 +79,7 @@ namespace xFaceLib.extensions.advancedFileTransfer
             {
                 if (type.Equals(COMMAND_DOWNLOAD))
                 {
-                    fileTransfer = new XFileDownloader(source, target, mFileTransferRecorder, this);
+                    fileTransfer = new XFileDownloader(source, target, appworkSpace, mFileTransferRecorder, this);
                 }
                 HashMapFileTransfers.Add(source, fileTransfer);
             }

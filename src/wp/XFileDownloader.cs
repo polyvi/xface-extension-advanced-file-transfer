@@ -76,6 +76,11 @@ namespace xFaceLib.extensions.advancedFileTransfer
         private String LocalFilePath;
 
         /// <summary>
+        /// 当前App的WorkSpace
+        /// </summary>
+        private String AppWorkSpace;
+
+        /// <summary>
         /// 已下载的具体信息
         /// </summary>
         private XFileDownloadInfo DownloadInfo;
@@ -104,11 +109,12 @@ namespace xFaceLib.extensions.advancedFileTransfer
         /// </summary>
         //public event EventHandler<PluginResult> DispatchPluginResult;
 
-        public XFileDownloader(String url, String localFilePath,
+        public XFileDownloader(String url, String localFilePath, string appWorkSpace,
                 XFileTransferRecorder recorder, XFileTransferManager manager)
         {
             Url = url;
             LocalFilePath = localFilePath;
+            AppWorkSpace = appWorkSpace;
             FileTransferRecorder = recorder;
             FileTransferManager = manager;
             State = INIT;
@@ -285,7 +291,7 @@ namespace xFaceLib.extensions.advancedFileTransfer
             XFile.FileEntry entry = new XFile.FileEntry(LocalFilePath);
             //返回结果 只返回相对appworkspace部分路径
 
-            String absappWorkSpace = XUtils.BuildabsPathOnIsolatedStorage("");
+            String absappWorkSpace = XUtils.BuildabsPathOnIsolatedStorage(AppWorkSpace);
             entry.FullPath = entry.FullPath.Substring(absappWorkSpace.Length);
             entry.FullPath = entry.FullPath.Replace("\\", "/");
 
