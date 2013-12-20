@@ -285,7 +285,7 @@ namespace xFaceLib.extensions.advancedFileTransfer
         public void OnSuccess()
         {
             FileTransferRecorder.DeleteDownloadInfo(Url);
-            FileTransferManager.RemoveFileTranferTask(Url);
+            FileTransferManager.RemoveFileTranferTask(AppWorkSpace,Url);
             SetState(INIT);
 
             XFile.FileEntry entry = new XFile.FileEntry(LocalFilePath);

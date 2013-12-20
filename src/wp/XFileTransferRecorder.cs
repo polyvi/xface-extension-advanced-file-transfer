@@ -33,9 +33,9 @@ namespace xFaceLib.extensions.advancedFileTransfer
         /// </summary>
         private String ConfigPath;
 
-        public XFileTransferRecorder()
+        public XFileTransferRecorder(String appWorkSpace)
         {
-            ConfigPath = WORKSPACE + "\\" + FILETRANSFER_CONFIG_FILE_NAME;
+            ConfigPath = appWorkSpace + "\\" + FILETRANSFER_CONFIG_FILE_NAME;
 
             using(IsolatedStorageFile storage = IsolatedStorageFile.GetUserStoreForApplication())
             {

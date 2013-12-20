@@ -90,7 +90,8 @@ namespace WPCordovaClassLib.Cordova.Commands
             }
 
             String abstarget = XUtils.BuildabsPathOnIsolatedStorage(target);
-            FileTransferManager.Cancel(source, abstarget, COMMAND_DOWNLOAD);
+            string workspace = this.app.GetWorkSpace();
+            FileTransferManager.Cancel(workspace,source, abstarget, COMMAND_DOWNLOAD);
         }
 
         public void pause(string options)
@@ -108,7 +109,8 @@ namespace WPCordovaClassLib.Cordova.Commands
                 return;
             }
 
-            FileTransferManager.Pause(source);
+            string workspace = this.app.GetWorkSpace();
+            FileTransferManager.Pause(workspace,source);
         }
 
     }
