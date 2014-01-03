@@ -31,6 +31,10 @@
         <source-file src="src/android/FileTransferRecorder.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
         <source-file src="src/android/IFileTransfer.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
         <source-file src="src/android/IFileTransferListener.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <source-file src="src/android/FileUploader.java" target-dir="src/com/polyvi/xface/extension/advancedfiletransfer" />
+        <js-module name="AdvancedFileTransfer_android" src="www/android/AdvancedFileTransfer.js">
+            <merges target="window.xFace.AdvancedFileTransfer" />
+    </js-module>
     </platform>
 
     <!-- ios -->

@@ -90,6 +90,10 @@ public class FileTransferManager {
                 fileTransfer = new FileDownloader(mContext, source, target,
                         mFileTransferRecorder, this);
             }
+            else {
+                fileTransfer = new FileUploader(mContext, source, target,
+                        mFileTransferRecorder, this);
+            }
             mHashMapFileTransfers.put(source, fileTransfer);
         }
         return fileTransfer;

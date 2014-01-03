@@ -26,6 +26,7 @@ public class AdvancedFileTransfer extends CordovaPlugin {
     private static final String ILLEGAL_ARGUMENT_EXCEPTION_NAME_CONTAINS_COLON = "This file has a : in its name";
 
     private static final String COMMAND_DOWNLOAD = "download";
+    private static final String COMMAND_UPLOAD = "upload";
     private static final String COMMAND_PAUSE = "pause";
     private static final String COMMAND_CANCEL = "cancel";
 
@@ -60,7 +61,12 @@ public class AdvancedFileTransfer extends CordovaPlugin {
                 target = args.getString(1);
                 download(source, target, callbackCtx);
                 return true;
-            } else if (action.equals(COMMAND_PAUSE)) {
+            } else if (action.equals(COMMAND_UPLOAD)) {
+                source = args.getString(0);
+                target = args.getString(1);
+                upload(source, target, callbackCtx);
+                return true;
+            }else if (action.equals(COMMAND_PAUSE)) {
                 source = args.getString(0);
                 mFileTransferManager.pause(source);
                 callbackCtx.sendPluginResult(new PluginResult(
@@ -128,6 +134,31 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         file.getParentFile().mkdirs();
         mFileTransferManager.addFileTranferTask(url, file.getCanonicalPath(),
                 callbackCtx, COMMAND_DOWNLOAD);
+    }
+
+    public void upload(String filePath, String server,
+            CallbackContext callbackCtx) throws FileNotFoundException,
+            IllegalArgumentException {
+
+        // 目前上传目的地址只支持http协议
+        if (!server.startsWith("http://")) {
+            throw new IllegalArgumentException();
+        }
+        // 在此处检测文件是否存在，防止由于文件不存在运行很多不该执行的代码
+        XPathResolver pathResolver = new XPathResolver(filePath,
+        		((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
+        String absoluteFilePath = pathResolver.resolve();
+        if (null != absoluteFilePath) {
+            File uploadFile = new File(absoluteFilePath);
+            if (uploadFile.exists()) {
+                mFileTransferManager.addFileTranferTask(absoluteFilePath, server,
+                    callbackCtx, COMMAND_UPLOAD);
+            } else {
+                throw new FileNotFoundException();
+            }
+        } else {
+            throw new FileNotFoundException();
+        }
     }
 
     /**

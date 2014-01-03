@@ -15,6 +15,8 @@
       //var target = "/fileloadfile/Sublime.exe";
       var source = "http://www.polyvi.net:8012/develop/TrafficStats/chmdecoder.zip";
       var target = "chmdecoder.zip";
+      var uploadfile = "test_upload2.rar";
+      var uploadServer = "http://polyvi.net:8091/mi/UploadServer";
 
       function download(){
           var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
@@ -48,6 +50,34 @@
         document.getElementById('status').innerText = "fail";
         document.getElementById('result').innerText = res;
       };
+
+      function upload() {
+        fileTransfer2 = new xFace.AdvancedFileTransfer(uploadfile,uploadServer,true);
+        fileTransfer2.upload(uploadsuccess,uploadfail);
+      };
+
+      function uploadsuccess(entry) {
+        isResume = false;
+        alert("upload success");
+      };
+      function uploadfail(error) {
+        if(1 == error.code){
+          alert("找不到要上传的文件，请确认test_upload2.rar已经放入到SD卡和workspace下面");
+        } if(2 == error.code){
+          alert("url不正确，请确保url地址正确");
+        }
+        else {
+          alert("网络错误，请确认目标服务器的地址正确或者已经打开了网络连接");
+        }
+      };
+      function uploadpause() {
+        fileTransfer2 = new xFace.AdvancedFileTransfer(uploadfile,uploadServer,true);
+        fileTransfer2.pause();
+      }
+      function uploadCancel() {
+        fileTransfer2 = new xFace.AdvancedFileTransfer(uploadfile,uploadServer,true);
+        fileTransfer2.cancel();
+      }
     </script>
   </head>
 
@@ -60,6 +90,9 @@
       <div class="btn large" onclick="download();">Download</div>
       <div class="btn large" onclick="pause();">Pause</div>
       <div class="btn large" onclick="cancel();">Cancel</div>
+      <div class="btn large" data-platform="android" onclick="upload();">Upload</div>
+      <div class="btn large" data-platform="android" onclick="uploadpause();">Upload Pause</div>
+      <div class="btn large" data-platform="android" onclick="uploadCancel();">Upload Cancel</div>
       <h2> </h2><div class="backBtn" onclick="backHome();">Back</div>
   </body>
 </html>

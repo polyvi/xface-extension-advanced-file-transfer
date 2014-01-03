@@ -186,5 +186,12 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             });
             waitsForAny(downloadWin, downloadFail);
         });
+
+        if(isAndroid()) {
+        it("advancedtransfer.spec.14 should contain a upload function(iOS not support upload function now! please ignore!!!)", function() {
+            var upload_aft = new xFace.AdvancedFileTransfer(upload_source,upload_target,true);
+            expect(typeof upload_aft.upload).toBe('function');
+        });
+   }
     });
 });
