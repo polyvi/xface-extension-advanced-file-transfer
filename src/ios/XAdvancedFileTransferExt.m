@@ -85,14 +85,13 @@
         return;
     }
 
-    [downloaderManager addDownloaderWithMessageHandler:[[self ownerApp] jsEvaluator] callbackId:command.callbackId application:app url:source filePath:fullPath];
+    [downloaderManager addDownloaderWithCommandDelegate:self.commandDelegate callbackId:command.callbackId application:app url:source filePath:fullPath];
 }
 
 - (void) pause:(CDVInvokedUrlCommand*)command
 {
     NSString *source = [command.arguments objectAtIndex:0];
-    id<XApplication> app = [self ownerApp];
-    [downloaderManager pauseWithAppId:[app getAppId] url:source];
+    [downloaderManager pauseWithUrl:source];
 }
 
 - (void) cancel:(CDVInvokedUrlCommand*)command
@@ -101,14 +100,13 @@
     NSString *filePath = [command.arguments objectAtIndex:1];
     id<XApplication> app = [self ownerApp];
     filePath = [XUtils resolvePath:filePath usingWorkspace:[app getWorkspace]];
-    [downloaderManager cancelWithAppId:[app getAppId] url:url filePath:filePath];
+    [downloaderManager cancelWithUrl:url filePath:filePath];
 }
 
 - (void)dealloc
 {
     // 退出app时暂停该app中的所有下载任务
-    // TODO:移除appId
-    [self->downloaderManager stopAllWithAppId:nil];
+    [self->downloaderManager stopAll];
 }
 
 @end

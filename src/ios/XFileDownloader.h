@@ -47,8 +47,7 @@ typedef int XDownloadState;
  *  每当用户发起下载请求时会为每一个url创建一个下载器，具体的下载任务交给XFileDownloaderDelegete */
 @interface XFileDownloader : NSObject<XFileDownloadListener>
 {
-    XJavaScriptEvaluator      *jsEvaluator;         /**< js语句执行者，即消息处理者 */
-    id<XApplication>           app;                 /**< 关联的应用 */
+    id <CDVCommandDelegate>   commandDelegate;         /**< js command结果执行者delegate */
     XFileDownloadInfoRecorder *downloadInfoRecorder;/**< 操作配置文件的对象 */
     XFileDownloaderManager    *downloaderManager;   /**< 下载器管理者 */
     XFileDownloadInfo         *downloadInfo;        /**< 下载的具体信息 */
@@ -65,15 +64,14 @@ typedef int XDownloadState;
 /**
     初始化XFileDownloader对象.
     @param msger        用于发送消息给handler
-    @param msgHandler   消息处理者
-    @param application  当前应用
+    @param cmdDelegate  消息处理者
     @param aUrl         下载地址
     @param filePath     保存下载文件的路径
     @param recorder     XFileDownloadInfoRecorder对象，用于操作配置文件
     @param manager      XFileDownloaderManager对象，用于管理XFileDownloader对象
     @return 初始化后的XFileDownloader对象，如果初始化失败，则返回nil
  */
-- (id)initWithMessageHandler:(XJavaScriptEvaluator *)msgHandler application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager;
+- (id)initWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager;
 
 /**
     开始下载.

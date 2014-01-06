@@ -32,72 +32,48 @@
 
 @implementation XFileDownloaderManager
 
-- (id) init
+- (void) removeDownloaderWithUrl:(NSString *)url
 {
-    self = [super init];
-    if(self)
-    {
-        self->dictDownloaders = [NSMutableDictionary dictionaryWithCapacity:1];
-        self->dictDownloadInfoRecorders = [NSMutableDictionary dictionaryWithCapacity:1];
-    }
-    return self;
+    [self->dictDownloaders removeObjectForKey:url];
 }
 
-- (void) removeDownloaderWithAppId:(NSString *)appId url:(NSString *)url
+- (void) addDownloaderWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath
 {
-    NSMutableDictionary *downloaders = [self->dictDownloaders valueForKey:appId];
-    if (nil != downloaders)
-    {
-        [downloaders removeObjectForKey:url];
-    }
-}
-
-- (void) addDownloaderWithMessageHandler:(XJavaScriptEvaluator *)msgHandler callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath
-{
-    XFileDownloadInfoRecorder *downloadInfoRecorder = [self->dictDownloadInfoRecorders valueForKey:[application getAppId]];
     if (nil == downloadInfoRecorder)
     {
         downloadInfoRecorder = [[XFileDownloadInfoRecorder alloc] initWithApp:application];
-        [self->dictDownloadInfoRecorders setObject:downloadInfoRecorder forKey:[application getAppId]];
     }
-
-    NSMutableDictionary *downloaders = [self->dictDownloaders valueForKey:[application getAppId]];
     XFileDownloader *downloader = nil;
-    if(nil == downloaders)
+    if(nil == self->dictDownloaders)
     {
-        downloader = [[XFileDownloader alloc] initWithMessageHandler:msgHandler application:application url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self];
-        downloaders = [NSMutableDictionary dictionaryWithCapacity:1];
-        [downloaders setObject:downloader forKey:aUrl];
-        [self->dictDownloaders setObject:downloaders forKey:[application getAppId]];
+        self->dictDownloaders = [NSMutableDictionary dictionaryWithCapacity:1];
+        downloader = [[XFileDownloader alloc] initWithCommandDelegate:cmdDelegate url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self];
+        [self->dictDownloaders setObject:downloader forKey:aUrl];
     }
     else
     {
-        downloader = [downloaders objectForKey:aUrl];
+        downloader = [self->dictDownloaders objectForKey:aUrl];
         if(nil == downloader)
         {
-            downloader = [[XFileDownloader alloc] initWithMessageHandler:msgHandler application:application url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self];
-            [downloaders setObject:downloader forKey:aUrl];
+            downloader = [[XFileDownloader alloc] initWithCommandDelegate:cmdDelegate url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self];
+            [self->dictDownloaders setObject:downloader forKey:aUrl];
         }
     }
     [downloader download:callbackId];
 }
 
-- (void) pauseWithAppId:(NSString *)appId url:(NSString *)url
+- (void) pauseWithUrl:(NSString *)url
 {
-    NSMutableDictionary *downloaders = [self->dictDownloaders valueForKey:appId];
-    if(nil != downloaders)
+    XFileDownloader *downloader = [self->dictDownloaders valueForKey:url];
+    if(nil != downloader)
     {
-        XFileDownloader *downloader = [downloaders valueForKey:url];
-        if(nil != downloader)
-        {
-            [downloader pause];
-        }
+        [downloader pause];
     }
 }
 
-- (void) stopAllWithAppId:(NSString *)appId
+- (void) stopAll
 {
-    NSMutableDictionary *downloaders = [dictDownloaders valueForKey:[dictDownloaders allKeys][0]];
+    NSArray *downloaders = [self->dictDownloaders allValues];
     if(nil != downloaders)
     {
         for(XFileDownloader *downloader in [downloaders objectEnumerator])
@@ -107,12 +83,11 @@
     }
 }
 
-- (void) cancelWithAppId:(NSString *)appId url:(NSString *)url filePath:(NSString *)filePath
+- (void) cancelWithUrl:(NSString *)url filePath:(NSString *)filePath
 {
-    [self pauseWithAppId:appId url:url];
-    [self removeDownloaderWithAppId:appId url:url];
-    XFileDownloadInfoRecorder *recorder = [self->dictDownloadInfoRecorders objectForKey:appId];
-    [recorder deleteDownloadInfo:url];
+    [self pauseWithUrl:url];
+    [self removeDownloaderWithUrl:url];
+    [self->downloadInfoRecorder deleteDownloadInfo:url];
 
     //删掉已下载的temp文件
     [XFileUtils removeItemAtPath:[filePath stringByAppendingString:TEMP_FILE_SUFFIX] error:nil];

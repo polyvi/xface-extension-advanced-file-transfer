@@ -34,13 +34,12 @@
 
 @implementation XFileDownloader
 
-- (id) initWithMessageHandler:(XJavaScriptEvaluator *)msgHandler application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager
+- (id) initWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager
 {
     self = [super init];
     if(self)
     {
-        self->jsEvaluator = msgHandler;
-        self->app = application;
+        self->commandDelegate = cmdDelegate;
         self->state = INIT;
         self->completeSize = 0;
         self->url = aUrl;
@@ -161,10 +160,7 @@
 
     // 由于还需执行后续的onSuccess或onError,故需做此标记以通知js端保留之前设置的回调
     [result setKeepCallbackAsBool:YES];
-    
-    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:self->_callbackId, result, nil];
-    [self->jsEvaluator performSelectorOnMainThread:@selector(eval:)
-                                        withObject:arguments waitUntilDone:YES];
+    [self->commandDelegate sendPluginResult:result callbackId:self->_callbackId];
 }
 
 - (void) onSuccess
@@ -183,30 +179,28 @@
     //FIXME:我们认为在上述情况下不应出现重命名失败的问题，如果实际应用中的确还会发生ret为NO的情况，则考虑添加自定义错误码
     NSAssert(ret, @"Rename temp file should not be failed!");
 
-    [downloaderManager removeDownloaderWithAppId:[self->app getAppId] url:self->url];
+    [downloaderManager removeDownloaderWithUrl:self->url];
     [downloadInfoRecorder deleteDownloadInfo:self->url];
     self->state = INIT;
 
-    NSDictionary *entry = [XFileUtils getEntry:self->localFilePath usingWorkspace:[self->app getWorkspace] isDir:NO];
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:entry];
+    NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:4];
+    [entry setObject:[NSNumber numberWithBool: YES]  forKey:@"isFile"];
+    [entry setObject:[NSNumber numberWithBool: NO]  forKey:@"isDirectory"];
+    NSString *fileName = [self->localFilePath lastPathComponent];
+    [entry setObject: self->localFilePath forKey:@"fullPath"];
+    [entry setObject: fileName forKey:@"name"];
 
-    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:self->_callbackId, result, nil];
-    [self->jsEvaluator performSelectorOnMainThread:@selector(eval:)
-                                        withObject:arguments waitUntilDone:NO];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:entry];
+    [self->commandDelegate sendPluginResult:result callbackId:self->_callbackId];
 }
 
 - (void) onError
 {
     self->state = INIT;
-    [downloaderManager removeDownloaderWithAppId:[self->app getAppId] url:self->url];
+    [downloaderManager removeDownloaderWithUrl:self->url];
     [downloadInfoRecorder deleteDownloadInfo:self->url];
-    NSUInteger workspaceLen = [[self->app getWorkspace] length];
-    NSString *path = [self->localFilePath substringFromIndex:workspaceLen];
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary: [XFileUtils createFileTransferError:CONNECTION_ERR andSource:self->url andTarget:path]];
-
-    NSMutableArray *arguments = [NSMutableArray arrayWithObjects:self->_callbackId, result, nil];
-    [self->jsEvaluator performSelectorOnMainThread:@selector(eval:)
-                                        withObject:arguments waitUntilDone:NO];
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsDictionary: [XFileUtils createFileTransferError:CONNECTION_ERR andSource:self->url andTarget:self->localFilePath]];
+    [self->commandDelegate sendPluginResult:result callbackId:self->_callbackId];
 }
 
 @end

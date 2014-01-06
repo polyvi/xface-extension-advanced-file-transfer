@@ -33,56 +33,45 @@
  *  当当前的url对应的下载任务完成时应该删除该下载任务 */
 @interface XFileDownloaderManager : NSObject
 {
-    /** 该对象的key代表appId,value代表NSMutableDictionary对象，这个对象中的key代表url,value代表XFileDownloader对象*/
+    /** 该对象中的key代表url,value代表XFileDownloader对象*/
     NSMutableDictionary *dictDownloaders;
 
-    /** 为每个app创建一个XFileDownloadInfoRecorder对象，该对象的key代表appId*/
-    NSMutableDictionary *dictDownloadInfoRecorders;
+    /** 文件下载信息记录*/
+    XFileDownloadInfoRecorder *downloadInfoRecorder;
 }
 
 /**
-    初始化XFileDownloaderManager对象.
-    @return 初始化后的XFileDownloaderManager对象，如果初始化失败，则返回nil
- */
-- (id) init;
-
-/**
     当文件下载完成时移除XFileDownloader.
-    @param appId        该FileDownloader所在的App的id
     @param url          下载地址
  */
-- (void) removeDownloaderWithAppId:(NSString *)appId url:(NSString *)url;
+- (void) removeDownloaderWithUrl:(NSString *)url;
 
 /**
     当有下载任务发起时，添加一个XFileDownloader.
-    @param msger        用于发送消息给handler
-    @param msgHandler   消息处理者
+    @param cmdDelegate  消息处理者
     @param callback     callback
     @param application  当前应用
     @param aUrl         下载地址
     @param filePath     保存下载文件的路径
  */
-- (void) addDownloaderWithMessageHandler:(XJavaScriptEvaluator *)msgHandler callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath;
+- (void) addDownloaderWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath;
 
 /**
     暂停当前app下url对应的下载任务.
-    @param appId        该FileDownloader所在的App的id
     @param url          下载地址
  */
-- (void) pauseWithAppId:(NSString *)appId url:(NSString *)url;
+- (void) pauseWithUrl:(NSString *)url;
 
 /**
     暂停当前app中的所有下载任务.
-    @param appId        当前app的id
  */
-- (void) stopAllWithAppId:(NSString *)appId;
+- (void) stopAll;
 
 /**
     取消当前app下url对应的下载任务.
-    @param appId        当前app的id
     @param url          下载地址
     @param filePath     存放下载文件的本地地址
  */
-- (void) cancelWithAppId:(NSString *)appId url:(NSString *)url filePath:(NSString *)filePath;
+- (void) cancelWithUrl:(NSString *)url filePath:(NSString *)filePath;
 
 @end
