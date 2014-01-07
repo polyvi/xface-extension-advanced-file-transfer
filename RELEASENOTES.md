@@ -21,3 +21,9 @@
 -->
 
 # Release Notes
+### 1.0.0 Tue Jan 07 2014 16:08:26 GMT+0800 (CST)
+ *  [android][Sync xFace3.1]Add Upload method
+ *  AdvancedFileTransfer支持多app
+ *  [wp8] modify AdvancedFileTransfer  support appWorkspace
+ *  modify plugin.xml,delete dependency plugin url config
+ *  added jasmine tests unique id
