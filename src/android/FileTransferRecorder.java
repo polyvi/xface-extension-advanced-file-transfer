@@ -31,6 +31,7 @@ import org.w3c.dom.Element;
 import com.polyvi.xface.util.XLog;
 import com.polyvi.xface.util.XXmlUtils;
 
+// 该类用于操作配置文件(包括配置文件的初始化，读取配置文件，写配置文件，更新配置文件和删除配置文件)
 public class FileTransferRecorder {
     private static final String CLASS_NAME = FileTransferRecorder.class
             .getSimpleName();
@@ -43,8 +44,6 @@ public class FileTransferRecorder {
     private static final String CONFIG_FILE_TAG_COMPLETE_SIZE = "completeSize";
     private static final String CONFIG_FILE_TAG_SOURCE_ID = "sourceid";
 
-    private String mConfigRoot = null;
-
     /** 配置文件xml内容对应的Document对象 */
     private Document mDocument;
 
@@ -52,8 +51,7 @@ public class FileTransferRecorder {
     private String mConfigPath;
 
     public FileTransferRecorder(String configRoot) {
-        this.mConfigRoot = configRoot;
-        mConfigPath = this.mConfigRoot + File.separator
+        mConfigPath = configRoot + File.separator
                 + FILETRANSFER_CONFIG_FILE_NAME;
         File file = new File(mConfigPath);
         if (!file.exists()) {
@@ -80,8 +78,8 @@ public class FileTransferRecorder {
      */
     public synchronized boolean hasDownloadInfo(String url) {
         if (null != mDocument) {
-            Element mElement = mDocument.getElementById(url);
-            return (mElement != null);
+            Element urlElement = mDocument.getElementById(url);
+            return (urlElement != null);
         }
         return false;
     }

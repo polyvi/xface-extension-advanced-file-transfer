@@ -39,7 +39,6 @@ import org.apache.cordova.PluginResult.Status;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Context;
 import com.polyvi.xface.util.XLog;
 import com.polyvi.xface.util.XStringUtils;
 
@@ -122,13 +121,10 @@ public class FileUploader implements IFileTransferListener, IFileTransfer {
     /** 上传管理器 */
     private FileTransferManager mFileTransferManager;
 
-    private Context mContext;
-
-    public FileUploader(Context context, String filePath, String server,
+    public FileUploader(String filePath, String server,
 			FileTransferRecorder recorder, FileTransferManager manager) {
-    	mFilePath = filePath;
+        mFilePath = filePath;
         mServer = server;
-        mContext = context;
         mFileTransferRecorder = recorder;
         mFileTransferManager = manager;
     }

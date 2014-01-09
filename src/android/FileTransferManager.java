@@ -39,9 +39,9 @@ public class FileTransferManager {
      * 一个FileTransferManager管理一个app的下载上传任务 Map<String,
      * IFileTransfer>,第一个key代表上传是表示要上传的文件地址
      */
-    private Map<String, IFileTransfer> mHashMapFileTransfers = null;
+    private Map<String, IFileTransfer> mHashMapFileTransfers;
 
-    private FileTransferRecorder mFileTransferRecorder = null;
+    private FileTransferRecorder mFileTransferRecorder;
 
     private Context mContext;
 
@@ -111,7 +111,7 @@ public class FileTransferManager {
                         mFileTransferRecorder, this);
             }
             else {
-                fileTransfer = new FileUploader(mContext, source, target,
+                fileTransfer = new FileUploader(source, target,
                         mFileTransferRecorder, this);
             }
             mHashMapFileTransfers.put(source, fileTransfer);

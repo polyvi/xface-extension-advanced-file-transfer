@@ -43,9 +43,6 @@ public class AdvancedFileTransfer extends CordovaPlugin {
     private static final String CLASS_NAME = AdvancedFileTransfer.class
             .getSimpleName();
 
-    private static final String ILLEGAL_ARGUMENT_EXCEPTION_NOT_IN_ROOT_DIR = "filePath is not in root directory";
-    private static final String ILLEGAL_ARGUMENT_EXCEPTION_NAME_CONTAINS_COLON = "This file has a : in its name";
-
     private static final String COMMAND_DOWNLOAD = "download";
     private static final String COMMAND_UPLOAD = "upload";
     private static final String COMMAND_PAUSE = "pause";

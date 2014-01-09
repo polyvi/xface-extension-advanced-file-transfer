@@ -24,9 +24,15 @@ package com.polyvi.xface.extension.advancedfiletransfer;
 import org.apache.cordova.CallbackContext;
 
 public interface IFileTransfer {
-
+    /**
+     * 执行文件传输(上传和下载)
+     * @param  callbackCtx  回调上下文环境
+     */
     public void transfer(CallbackContext callbackContext);
 
+    /**
+     * 暂停文件传输
+     */
     public void pause();
 
 }

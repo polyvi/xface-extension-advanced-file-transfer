@@ -21,12 +21,17 @@
 
 package com.polyvi.xface.extension.advancedfiletransfer;
 
+/** 该类用于记录下载的具体信息（包括下载的地址，下载文件的总大小以及下载完成了的大小,
+ *  这些数据将记录到配置文件中用于断点续传）*/
 public class FileDownloadInfo {
 
+    /** 要下载的文件总大小 */
     private int mTotalSize;
 
+    /** 已下载的大小 */
     private int mCompleteSize;
 
+    /** 下载地址 */
     private String mUrl;
 
     public FileDownloadInfo(int totalSize, int completeSize, String url) {
