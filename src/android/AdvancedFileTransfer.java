@@ -34,10 +34,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.polyvi.xface.util.XLog;
 import com.polyvi.xface.util.XPathResolver;
 import com.polyvi.xface.view.XAppWebView;
 
-import android.util.Log;
 
 public class AdvancedFileTransfer extends CordovaPlugin {
     private static final String CLASS_NAME = AdvancedFileTransfer.class
@@ -105,23 +105,23 @@ public class AdvancedFileTransfer extends CordovaPlugin {
                     source, target);
             callbackCtx.sendPluginResult(new PluginResult(
                     PluginResult.Status.ERROR, error));
-            Log.e(CLASS_NAME, e.getMessage());
+            XLog.e(CLASS_NAME, e.getMessage());
         } catch (IllegalArgumentException e) {
             JSONObject error = createFileTransferError(INVALID_URL_ERR, source,
                     target);
             callbackCtx.sendPluginResult(new PluginResult(
                     PluginResult.Status.ERROR, error));
-            Log.e(CLASS_NAME, e.getMessage());
+            XLog.e(CLASS_NAME, e.getMessage());
         } catch (IOException e) {
             JSONObject error = createFileTransferError(CONNECTION_ERR, source,
                     target);
             callbackCtx.sendPluginResult(new PluginResult(
                     PluginResult.Status.ERROR, error));
-            Log.e(CLASS_NAME, e.getMessage());
+            XLog.e(CLASS_NAME, e.getMessage());
         } catch (JSONException e) {
             callbackCtx.sendPluginResult(new PluginResult(
                     PluginResult.Status.JSON_EXCEPTION));
-            Log.e(CLASS_NAME, e.getMessage(), e);
+            XLog.e(CLASS_NAME, e.getMessage(), e);
         }
         return false;
     }
@@ -198,7 +198,7 @@ public class AdvancedFileTransfer extends CordovaPlugin {
             error.put("source", source);
             error.put("target", target);
         } catch (JSONException e) {
-            Log.e(CLASS_NAME, e.getMessage(), e);
+            XLog.e(CLASS_NAME, e.getMessage(), e);
         }
         return error;
     }

@@ -28,9 +28,8 @@ import java.io.IOException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
+import com.polyvi.xface.util.XLog;
 import com.polyvi.xface.util.XXmlUtils;
-
-import android.util.Log;
 
 public class FileTransferRecorder {
     private static final String CLASS_NAME = FileTransferRecorder.class
@@ -67,7 +66,7 @@ public class FileTransferRecorder {
                 out.write(TAG_FILETRANSFER_INFO.getBytes());
                 out.close();
             } catch (IOException e) {
-                Log.e(CLASS_NAME, e.getMessage());
+                XLog.e(CLASS_NAME, e.getMessage());
             }
         }
         mDocument = XXmlUtils.parseXml(mConfigPath);

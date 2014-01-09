@@ -34,8 +34,9 @@ import org.apache.cordova.PluginResult;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.polyvi.xface.util.XLog;
+
 import android.content.Context;
-import android.util.Log;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
 
@@ -133,7 +134,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
                         // 保存mDownloadInfo中的数据到配置文件
                         mFileTransferRecorder.saveDownloadInfo(mDownloadInfo);
                     } else {
-                        Log.e(CLASS_NAME, "cannot get totalSize");
+                        XLog.e(CLASS_NAME, "cannot get totalSize");
                     }
                     // 如果第一次下的时候存在temp文件则删除之
                     File file = new File(mLocalFilePath + TEMP_FILE_SUFFIX);
@@ -142,7 +143,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
                     }
                 }
             } catch (IOException e) {
-                Log.e(CLASS_NAME, e.getMessage());
+                XLog.e(CLASS_NAME, e.getMessage());
             } finally {
                 if (null != connection) {
                     connection.disconnect();
@@ -229,17 +230,17 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
                             }
                         } catch (FileNotFoundException e) {
                                 onError(FILE_NOT_FOUND_ERR);
-                                Log.e(CLASS_NAME, e.getMessage());
+                                XLog.e(CLASS_NAME, e.getMessage());
                         } catch (IOException e) {
                             if (retry <= 0) {
                                 onError(CONNECTION_ERR);
-                                Log.e(CLASS_NAME, e.getMessage());
+                                XLog.e(CLASS_NAME, e.getMessage());
                             }
                             // 网络异常,睡1秒超时再连接
                             try {
                                 Thread.sleep(RETRY_INTERVAL);
                             } catch (InterruptedException ex) {
-                                Log.e(CLASS_NAME, "sleep be interrupted", ex);
+                                XLog.e(CLASS_NAME, "sleep be interrupted", ex);
                             }
                         } finally {
                             try {
@@ -255,7 +256,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
                                     connection.disconnect();
                                 }
                             } catch (IOException e) {
-                                Log.e(CLASS_NAME, e.getMessage());
+                                XLog.e(CLASS_NAME, e.getMessage());
                             }
                         }
                     } while ((DOWNLOADING == mState) && (0 < retry--));
@@ -295,7 +296,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
             jsonObj.put("end", file.length());
             jsonObj.put("status", "finished");
         } catch (JSONException e) {
-            Log.e(CLASS_NAME, e.getMessage());
+            XLog.e(CLASS_NAME, e.getMessage());
         }
         mCallbackCtx.success(jsonObj);
     }
@@ -311,7 +312,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
             error.put("source", mUrl);
             error.put("target", fullPath);
         } catch (JSONException e) {
-            Log.e(CLASS_NAME, e.getMessage());
+            XLog.e(CLASS_NAME, e.getMessage());
         }
         mCallbackCtx.error(error);
     }
@@ -330,7 +331,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
             jsonObj.put("total", totalSize);
             jsonObj.put("status", "unfinished");
         } catch (JSONException e) {
-            Log.e(CLASS_NAME, e.getMessage());
+            XLog.e(CLASS_NAME, e.getMessage());
         }
         PluginResult result = new PluginResult(PluginResult.Status.OK, jsonObj);
         result.setKeepCallback(true);
