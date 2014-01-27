@@ -27,3 +27,11 @@
  *  [wp8] modify AdvancedFileTransfer  support appWorkspace
  *  modify plugin.xml,delete dependency plugin url config
  *  added jasmine tests unique id
+### 1.0.1 Mon Jan 27 2014 15:56:17 GMT+0800 (CST)
+ *  batch modify .reviewboard
+ *  [android][Sync xFace3.1]Delete redundant codes and change file format from ANSI to UTF-8
+ *  [android]Change Log to XLog
+ *  [android]Licensed GPLV3 to advanced file transfer plugin
+ *  refactor advance_filetransfer
+ *   Sync p4 change 17214: Removed unused method 'updateDownloadInfo' from XFileDownloadInfoRecorder
+ *  Incremented plugin version on dev branch to 1.0.1-dev
