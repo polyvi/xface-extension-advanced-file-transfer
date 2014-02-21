@@ -33,6 +33,8 @@
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVPluginResult.h>
 
+#import "CDVFile+XFile.h"
+
 @implementation XAdvancedFileTransferExt
 
 - (id)initWithWebView:(UIWebView*)theWebView
@@ -53,12 +55,8 @@
     XFileTransferError errorCode = 0;
     CDVPluginResult *result = nil;
 
-    if (NSNotFound != [filePath rangeOfString:@":"].location)
-    {
-        errorCode = FILE_NOT_FOUND_ERR;
-    }
-
-    NSString *fullPath = [XUtils resolvePath:filePath usingWorkspace:[app getWorkspace]];
+    CDVFile *filePlugin = [self.commandDelegate getCommandInstance:@"File"];
+    NSString *fullPath = [filePlugin resolveFilePath:filePath];
     if (!fullPath)
     {
         errorCode = FILE_NOT_FOUND_ERR;
@@ -98,8 +96,9 @@
 {
     NSString *url = [command.arguments objectAtIndex:0];
     NSString *filePath = [command.arguments objectAtIndex:1];
-    id<XApplication> app = [self ownerApp];
-    filePath = [XUtils resolvePath:filePath usingWorkspace:[app getWorkspace]];
+    CDVFile *filePlugin = [self.commandDelegate getCommandInstance:@"File"];
+
+    filePath = [filePlugin resolveFilePath:filePath];
     [downloaderManager cancelWithUrl:url filePath:filePath];
 }
 
