@@ -144,7 +144,7 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         }
         XPathResolver pathResolver = new XPathResolver(filePath,
                 ((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
-        String path = pathResolver.resolve();
+        String path = pathResolver.resolve(this.webView.getResourceApi());
         if(null == path){
             throw new FileNotFoundException();
         }
@@ -165,7 +165,7 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         // 在此处检测文件是否存在，防止由于文件不存在运行很多不该执行的代码
         XPathResolver pathResolver = new XPathResolver(filePath,
         		((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
-        String absoluteFilePath = pathResolver.resolve();
+        String absoluteFilePath = pathResolver.resolve(this.webView.getResourceApi());
         if (null != absoluteFilePath) {
             File uploadFile = new File(absoluteFilePath);
             if (uploadFile.exists()) {
