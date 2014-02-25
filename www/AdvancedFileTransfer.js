@@ -37,13 +37,13 @@ var argscheck = require('cordova/argscheck'),
  *        上传的本地文件路径支持的类型：<br/>
  *          1.相对路径，例如："myPath/test.txt"，则默认在app的workspace下<br/>
  *          2.全路径，例如："/myPath/..."<br/>
- *          3.file://协议的全路径，例如："file://myPath/..."<br/>
+ *          3.file://协议URL，例如："file:///myPath/..."<br/>
  *          4.通过{{#crossLink "File"}}{{/crossLink}}扩展获取的URL，参见{{#crossLink "Entry/toURL"}}{{/crossLink}}
  * @param {String} target 文件传输的目标地址（下载时为本地地址（可以为工作目录也可以指定其他路径，其他路径用file://头标示），上传时为服务器地址）<br/>
  *        下载的本地文件路径支持的类型：<br/>
  *          1.相对路径，例如："myPath/test.txt"，则默认在app的workspace下<br/>
  *          2.全路径，例如："/myPath/..."<br/>
- *          3.file://协议的全路径，例如："file://myPath/..."<br/>
+ *          3.file://协议URL，例如："file:///myPath/..."<br/>
  *          4.通过{{#crossLink "File"}}{{/crossLink}}扩展获取的URL，参见{{#crossLink "Entry/toURL"}}{{/crossLink}}
  * @param {boolean} [isUpload=false] 标识是上传还是下载（默认为false，即默认为下载，iOS，WP8目前还不支持上传）
  * @class AdvancedFileTransfer
