@@ -14,17 +14,14 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
         }
     };
     // deletes file, if it exists, then invokes callback
-    var deleteFile = function(fileName, callback) {
-        callback = callback || function() {};
-        var spy = jasmine.createSpy().andCallFake(callback);
-        root.getFile(fileName, {create: false},
+    var deleteFile = function(rootEntry, fileName, callback) {
+        rootEntry.getFile(fileName, null,
             // remove file system entry
             function(entry) {
-                entry.remove(spy, spy);
+                entry.remove(callback, function() { console.log('[ERROR] deleteFile cleanup method invoked fail callback.'); });
             },
             // doesn't exist
-            spy);
-        waitsFor(function() { return spy.wasCalled; }, Tests.TEST_TIMEOUT);
+            callback);
     };
 
     it("advancedtransfer.spec.1 should exist xFace.AdvancedFileTransfer object", function() {
@@ -61,7 +58,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
 
         it("advancedtransfer.spec.6 should be able to download a file using http", function() {
             this.after(function() {
-                deleteFile(download_target);
+                deleteFile(workspace_root, download_target);
             });
             runs(function() {
                 var aft = new xFace.AdvancedFileTransfer(download_source,download_target);
@@ -75,7 +72,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
 
         it("advancedtransfer.spec.7 should be able to download a file using http after pause", function() {
             this.after(function() {
-                deleteFile(download_target);
+                deleteFile(workspace_root, download_target);
             });
             runs(function() {
                 var download_win = createDoNotCallSpy('download_win');
@@ -98,7 +95,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             var downloadFail = jasmine.createSpy().andCallFake(function(e) {
             });
             this.after(function() {
-                deleteFile(download_target+".temp");
+                deleteFile(workspace_root, download_target+".temp");
             });
             runs(function() {
                 aft.pause(); // should be a no-op.
@@ -114,7 +111,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
             var downloadFail = jasmine.createSpy().andCallFake(function(e) {
             });
             this.after(function() {
-                deleteFile(download_target+".temp");
+                deleteFile(workspace_root, download_target+".temp");
             });
             runs(function() {
                 aft.cancel(); // should be a no-op.
@@ -131,7 +128,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
                 expect(error.code).toBe(FileTransferError.CONNECTION_ERR);
             });
             this.after(function() {
-                deleteFile(download_target);
+                deleteFile(workspace_root, download_target);
             });
             runs(function() {
                 var aft = new xFace.AdvancedFileTransfer(remoteFile,download_target);
@@ -150,7 +147,7 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
                 expect(error.code).toBe(FileTransferError.INVALID_URL_ERR);
             });
             this.after(function() {
-                deleteFile(download_target);
+                deleteFile(workspace_root, download_target);
             });
             runs(function() {
                 var aft = new xFace.AdvancedFileTransfer(remoteFile,download_target);
@@ -188,10 +185,267 @@ describe('AdvancedFileTransfer (xFace.AdvancedFileTransfer)', function () {
         });
 
         if(isAndroid()) {
-        it("advancedtransfer.spec.14 should contain a upload function(iOS not support upload function now! please ignore!!!)", function() {
-            var upload_aft = new xFace.AdvancedFileTransfer(upload_source,upload_target,true);
-            expect(typeof upload_aft.upload).toBe('function');
+	        it("advancedtransfer.spec.14 should contain a upload function(iOS not support upload function now! please ignore!!!)", function() {
+	            var upload_aft = new xFace.AdvancedFileTransfer(upload_source,upload_target,true);
+	            expect(typeof upload_aft.upload).toBe('function');
+	        });
+        }
+    });
+
+    describe('File Path', function () {
+        it("advancedtransfer.spec.15 success callback should be called with relative file path", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            };
+
+            this.after(function() {
+                deleteFile(workspace_root, download_target);
+            });
+            runs(function() {
+                var aft = new xFace.AdvancedFileTransfer(download_source, download_target);
+                aft.onprogress = function(e) {
+                    lastProgressEvent = e;
+                };
+                aft.download(downloadWin, fail);
+            });
+
+            waitsForAny(fileWin, fail, fileFail);
         });
-   }
+
+        it("advancedtransfer.spec.16 success callback should be called with absolute appworkspace file path", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+            var cdvfileURL = workspace_root.toURL() + download_target;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = jasmine.createSpy().andCallFake(function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            });
+
+            this.after(function() {
+                deleteFile(workspace_root, download_target);
+            });
+
+            var unsupportedOperation = jasmine.createSpy("Operation not supported");
+            runs(function() {
+                cordova.exec(function(localPath) {
+                    var aft = new xFace.AdvancedFileTransfer(download_source, localPath);
+	                aft.onprogress = function(e) {
+	                    lastProgressEvent = e;
+	                };
+	                aft.download(downloadWin, fail);
+                }, unsupportedOperation, 'File', '_getLocalFilesystemPath', [cdvfileURL]);
+            });
+            waitsForAny(fileWin, fail, fileFail);
+            runs(function() {
+                if (!unsupportedOperation.wasCalled) {
+                    expect(downloadWin).toHaveBeenCalled();
+                    expect(fail).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it("advancedtransfer.spec.17 success callback should be called with absolute persisent file path", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+            var cdvfileURL = persistent_root.toURL() + download_target;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = jasmine.createSpy().andCallFake(function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            });
+
+            this.after(function() {
+                deleteFile(persistent_root, download_target);
+            });
+
+            var unsupportedOperation = jasmine.createSpy("Operation not supported");
+            runs(function() {
+                cordova.exec(function(localPath) {
+                    var aft = new xFace.AdvancedFileTransfer(download_source, localPath);
+	                aft.onprogress = function(e) {
+	                    lastProgressEvent = e;
+	                };
+	                aft.download(downloadWin, fail);
+                }, unsupportedOperation, 'File', '_getLocalFilesystemPath', [cdvfileURL]);
+            });
+            waitsForAny(fileWin, fail, fileFail);
+            runs(function() {
+                if (!unsupportedOperation.wasCalled) {
+                    expect(downloadWin).toHaveBeenCalled();
+                    expect(fail).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it("advancedtransfer.spec.18 success callback should be called with appworkspace file url", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+            var cdvfileURL = workspace_root.toURL() + download_target;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = jasmine.createSpy().andCallFake(function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            });
+
+            this.after(function() {
+                deleteFile(workspace_root, download_target);
+            });
+
+            var unsupportedOperation = jasmine.createSpy("Operation not supported");
+            runs(function() {
+                cordova.exec(function(localPath) {
+                    var aft = new xFace.AdvancedFileTransfer(download_source, "file://" + localPath);
+	                aft.onprogress = function(e) {
+	                    lastProgressEvent = e;
+	                };
+	                aft.download(downloadWin, fail);
+                }, unsupportedOperation, 'File', '_getLocalFilesystemPath', [cdvfileURL]);
+            });
+            waitsForAny(fileWin, fail, fileFail);
+            runs(function() {
+                if (!unsupportedOperation.wasCalled) {
+                    expect(downloadWin).toHaveBeenCalled();
+                    expect(fail).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it("advancedtransfer.spec.19 success callback should be called with persisent file url", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+            var cdvfileURL = persistent_root.toURL() + download_target;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = jasmine.createSpy().andCallFake(function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            });
+
+            this.after(function() {
+                deleteFile(persistent_root, download_target);
+            });
+
+            var unsupportedOperation = jasmine.createSpy("Operation not supported");
+            runs(function() {
+                cordova.exec(function(localPath) {
+                    var aft = new xFace.AdvancedFileTransfer(download_source, "file://" + localPath);
+	                aft.onprogress = function(e) {
+	                    lastProgressEvent = e;
+	                };
+	                aft.download(downloadWin, fail);
+                }, unsupportedOperation, 'File', '_getLocalFilesystemPath', [cdvfileURL]);
+            });
+            waitsForAny(fileWin, fail, fileFail);
+            runs(function() {
+                if (!unsupportedOperation.wasCalled) {
+                    expect(downloadWin).toHaveBeenCalled();
+                    expect(fail).not.toHaveBeenCalled();
+                }
+            });
+        });
+
+        it("advancedtransfer.spec.20 success callback should be called with appworkspace cdvfile url", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+            var cdvfileURL = workspace_root.toURL() + download_target;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = jasmine.createSpy().andCallFake(function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            });
+
+            this.after(function() {
+                deleteFile(persistent_root, download_target);
+            });
+
+            var unsupportedOperation = jasmine.createSpy("Operation not supported");
+            runs(function() {
+                var aft = new xFace.AdvancedFileTransfer(download_source, cdvfileURL);
+                aft.onprogress = function(e) {
+                    lastProgressEvent = e;
+                };
+                aft.download(downloadWin, fail);
+            });
+            waitsForAny(fileWin, fail, fileFail);
+            runs(function() {
+                expect(downloadWin).toHaveBeenCalled();
+                expect(fail).not.toHaveBeenCalled();
+            });
+        });
+
+        it("advancedtransfer.spec.21 callback should be called with persisent cdvfile url", function () {
+            var fail = createDoNotCallSpy('downloadFail');
+            var fileFail = createDoNotCallSpy('downloadFail');
+            var lastProgressEvent = null;
+            var cdvfileURL = persistent_root.toURL() + download_target;
+
+            var fileWin = jasmine.createSpy().andCallFake(function(blob) {
+                expect(lastProgressEvent.loaded).not.toBeGreaterThan(blob.size);
+            });
+
+            var downloadWin = jasmine.createSpy().andCallFake(function(entry) {
+                expect(entry.name).toBe(download_target);
+                expect(lastProgressEvent.loaded).toBeGreaterThan(1);
+                entry.file(fileWin, fileFail);
+            });
+
+            this.after(function() {
+                deleteFile(persistent_root, download_target);
+            });
+
+            var unsupportedOperation = jasmine.createSpy("Operation not supported");
+            runs(function() {
+                var aft = new xFace.AdvancedFileTransfer(download_source, cdvfileURL);
+                aft.onprogress = function(e) {
+                    lastProgressEvent = e;
+                };
+                aft.download(downloadWin, fail);
+            });
+            waitsForAny(fileWin, fail, fileFail);
+            runs(function() {
+                expect(downloadWin).toHaveBeenCalled();
+                expect(fail).not.toHaveBeenCalled();
+            });
+        });
     });
 });
