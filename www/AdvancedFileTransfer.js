@@ -110,18 +110,19 @@ AdvancedFileTransfer.prototype.download = function(successCallback, errorCallbac
                if (typeof me.onprogress === "function") {
                me.onprogress(new ProgressEvent("progress", {loaded:result.loaded, total:result.total}));
                }
-         } else {
+         } else if (successCallback) {
             var entry = null;
             if (result.isDirectory) {
-                entry = new DirectoryEntry();
+                entry = new (require('org.apache.cordova.file.DirectoryEntry'))();
             }
             else if (result.isFile) {
-                entry = new FileEntry();
+                entry = new (require('org.apache.cordova.file.FileEntry'))();
             }
             entry.isDirectory = result.isDirectory;
             entry.isFile = result.isFile;
             entry.name = result.name;
             entry.fullPath = result.fullPath;
+            entry.filesystem = new FileSystem(result.filesystemName);
             successCallback(entry);
         }
     };
