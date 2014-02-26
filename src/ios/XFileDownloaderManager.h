@@ -29,6 +29,8 @@
 #import "XFileDownloadInfoRecorder.h"
 #import <XFace/XJavaScriptEvaluator.h>
 
+@class CDVFile;
+
 /** 该类用于管理所有应用的下载器，当有下载任务发起时创建一个XFileDownloader，
  *  当当前的url对应的下载任务完成时应该删除该下载任务 */
 @interface XFileDownloaderManager : NSObject
@@ -54,7 +56,7 @@
     @param aUrl         下载地址
     @param filePath     保存下载文件的路径
  */
-- (void) addDownloaderWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath;
+- (void) addDownloaderWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath filePlugin:(CDVFile *)filePlugin;
 
 /**
     暂停当前app下url对应的下载任务.

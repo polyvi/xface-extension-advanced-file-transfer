@@ -83,7 +83,7 @@
         return;
     }
 
-    [downloaderManager addDownloaderWithCommandDelegate:self.commandDelegate callbackId:command.callbackId application:app url:source filePath:fullPath];
+    [downloaderManager addDownloaderWithCommandDelegate:self.commandDelegate callbackId:command.callbackId application:app url:source filePath:fullPath filePlugin:filePlugin];
 }
 
 - (void) pause:(CDVInvokedUrlCommand*)command

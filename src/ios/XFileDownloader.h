@@ -35,6 +35,8 @@
 
 @protocol XApplication;
 
+@class CDVFile;
+
 enum XDownloadState
 {
     INIT = 1,           /**< 初始状态 */
@@ -58,7 +60,7 @@ typedef int XDownloadState;
     NSInteger                  completeSize;        /**< 已下载的大小 */
     NSInteger                  totalSize;           /**< 文件的总大小 */
     NSInteger                  state;               /**< 下载状态 */
-
+    CDVFile                   *filePlugin;          /**< 关联的file plugin*/
 }
 
 /**
@@ -69,9 +71,10 @@ typedef int XDownloadState;
     @param filePath     保存下载文件的路径
     @param recorder     XFileDownloadInfoRecorder对象，用于操作配置文件
     @param manager      XFileDownloaderManager对象，用于管理XFileDownloader对象
+    @param afilePlugin  关联的file plugin
     @return 初始化后的XFileDownloader对象，如果初始化失败，则返回nil
  */
-- (id)initWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager;
+- (id)initWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager filePlugin:afilePlugin;
 
 /**
     开始下载.

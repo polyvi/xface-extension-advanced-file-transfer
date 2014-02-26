@@ -25,16 +25,19 @@
 //
 //
 
-#import "XFileDownloader.h"
+
 #import <XFace/XApplication.h>
-#import "XFileDownloaderDelegate.h"
 #import <XFace/XFileUtils.h>
 #import <Cordova/CDVInvokedUrlCommand.h>
 #import <Cordova/CDVPluginResult.h>
 
+#import "XFileDownloaderDelegate.h"
+#import "XFileDownloader.h"
+#import "CDVFile.h"
+
 @implementation XFileDownloader
 
-- (id) initWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager
+- (id) initWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate url:(NSString *)aUrl filePath:(NSString *)filePath downloadInfoRecorder:(XFileDownloadInfoRecorder *)recorder downloaderManager:(XFileDownloaderManager *)manager filePlugin:afilePlugin
 {
     self = [super init];
     if(self)
@@ -47,6 +50,7 @@
         self->localFilePath = filePath;
         self->downloadInfoRecorder = recorder;
         self->downloaderManager = manager;
+        self->filePlugin = afilePlugin;
     }
     return self;
 }
@@ -183,14 +187,8 @@
     [downloadInfoRecorder deleteDownloadInfo:self->url];
     self->state = INIT;
 
-    NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:4];
-    [entry setObject:[NSNumber numberWithBool: YES]  forKey:@"isFile"];
-    [entry setObject:[NSNumber numberWithBool: NO]  forKey:@"isDirectory"];
-    NSString *fileName = [self->localFilePath lastPathComponent];
-    [entry setObject: self->localFilePath forKey:@"fullPath"];
-    [entry setObject: fileName forKey:@"name"];
-
-    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:entry];
+    NSURL *targetUrl = [self->filePlugin fileSystemURLforLocalPath:self->localFilePath].url;
+    CDVPluginResult *result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:[self->filePlugin makeEntryForURL:targetUrl]];
     [self->commandDelegate sendPluginResult:result callbackId:self->_callbackId];
 }
 

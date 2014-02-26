@@ -37,7 +37,7 @@
     [self->dictDownloaders removeObjectForKey:url];
 }
 
-- (void) addDownloaderWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath
+- (void) addDownloaderWithCommandDelegate:(id <CDVCommandDelegate>)cmdDelegate callbackId:(NSString *)callbackId application:(id<XApplication>)application url:(NSString *)aUrl filePath:(NSString *)filePath filePlugin:(CDVFile *)filePlugin
 {
     if (nil == downloadInfoRecorder)
     {
@@ -47,7 +47,7 @@
     if(nil == self->dictDownloaders)
     {
         self->dictDownloaders = [NSMutableDictionary dictionaryWithCapacity:1];
-        downloader = [[XFileDownloader alloc] initWithCommandDelegate:cmdDelegate url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self];
+        downloader = [[XFileDownloader alloc] initWithCommandDelegate:cmdDelegate url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self filePlugin:filePlugin];
         [self->dictDownloaders setObject:downloader forKey:aUrl];
     }
     else
@@ -55,7 +55,7 @@
         downloader = [self->dictDownloaders objectForKey:aUrl];
         if(nil == downloader)
         {
-            downloader = [[XFileDownloader alloc] initWithCommandDelegate:cmdDelegate url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self];
+            downloader = [[XFileDownloader alloc] initWithCommandDelegate:cmdDelegate url:aUrl filePath:filePath downloadInfoRecorder:downloadInfoRecorder downloaderManager:self filePlugin:filePlugin];
             [self->dictDownloaders setObject:downloader forKey:aUrl];
         }
     }
