@@ -54,9 +54,6 @@ public class AdvancedFileTransfer extends CordovaPlugin {
 
     private FileTransferManager mFileTransferManager;
 
-    public AdvancedFileTransfer() {
-    }
-
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
@@ -167,13 +164,8 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         		((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
         String absoluteFilePath = pathResolver.resolve(this.webView.getResourceApi());
         if (null != absoluteFilePath) {
-            File uploadFile = new File(absoluteFilePath);
-            if (uploadFile.exists()) {
-                mFileTransferManager.addFileTranferTask(absoluteFilePath, server,
-                    callbackCtx, COMMAND_UPLOAD);
-            } else {
-                throw new FileNotFoundException();
-            }
+            mFileTransferManager.addFileTranferTask(absoluteFilePath, server,
+                callbackCtx, COMMAND_UPLOAD);
         } else {
             throw new FileNotFoundException();
         }

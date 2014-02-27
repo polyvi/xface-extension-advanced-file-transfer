@@ -111,7 +111,7 @@ public class FileTransferManager {
                         mFileTransferRecorder, this);
             }
             else {
-                fileTransfer = new FileUploader(source, target,
+                fileTransfer = new FileUploader(mContext, source, target,
                         mFileTransferRecorder, this);
             }
             mHashMapFileTransfers.put(source, fileTransfer);
