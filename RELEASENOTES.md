@@ -35,3 +35,15 @@
  *  refactor advance_filetransfer
  *   Sync p4 change 17214: Removed unused method 'updateDownloadInfo' from XFileDownloadInfoRecorder
  *  Incremented plugin version on dev branch to 1.0.1-dev
+
+## 1.0.2 (Fri Feb 28 2014)
+
+
+ *  [Android]Advanced file transfer supports 'file:///android_asset/' protocal
+ *  Add auto tests for resolving file path.
+ *  Add filesystem property to entry object.
+ *  [iOS] Since entry object has more properties, use file plugin's method to make entry.
+ *  Fix the incorrect api description.
+ *  [Android]Advanced file transfer plugin supports cordova file url 'cdvfile://localhost/<filesystemType>/<path to file>'
+ *  [iOS]Invoke file plugin resolveFilePath: method to process file path
+ *  Incremented plugin version on dev branch to 1.0.2-dev
