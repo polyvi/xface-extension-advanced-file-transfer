@@ -123,6 +123,7 @@ AdvancedFileTransfer.prototype.download = function(successCallback, errorCallbac
             entry.name = result.name;
             entry.fullPath = result.fullPath;
             entry.filesystem = new FileSystem(result.filesystemName);
+            entry.nativeURL = result.nativeURL;
             successCallback(entry);
         }
     };
