@@ -38,7 +38,6 @@ import com.polyvi.xface.util.XLog;
 import com.polyvi.xface.util.XPathResolver;
 import com.polyvi.xface.view.XAppWebView;
 
-
 public class AdvancedFileTransfer extends CordovaPlugin {
     private static final String CLASS_NAME = AdvancedFileTransfer.class
             .getSimpleName();
@@ -74,14 +73,14 @@ public class AdvancedFileTransfer extends CordovaPlugin {
             if (action.equals(COMMAND_DOWNLOAD)) {
                 source = args.getString(0);
                 target = args.getString(1);
-                download(source, target, callbackCtx);
+                download(source, target, callbackCtx, webView);
                 return true;
             } else if (action.equals(COMMAND_UPLOAD)) {
                 source = args.getString(0);
                 target = args.getString(1);
                 upload(source, target, callbackCtx);
                 return true;
-            }else if (action.equals(COMMAND_PAUSE)) {
+            } else if (action.equals(COMMAND_PAUSE)) {
                 source = args.getString(0);
                 mFileTransferManager.pause(source);
                 callbackCtx.sendPluginResult(new PluginResult(
@@ -131,10 +130,11 @@ public class AdvancedFileTransfer extends CordovaPlugin {
      *            设备上的路径
      * @param callbackCtx
      *            回调上下文环境
+     * @param webView
      */
     public void download(String url, String filePath,
-            CallbackContext callbackCtx) throws FileNotFoundException,
-            IOException {
+            CallbackContext callbackCtx, CordovaWebView webView)
+            throws FileNotFoundException, IOException {
         // 目前下载目的地址只支持http协议
         if (!url.startsWith("http://")) {
             throw new IllegalArgumentException();
@@ -142,13 +142,13 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         XPathResolver pathResolver = new XPathResolver(filePath,
                 ((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
         String path = pathResolver.resolve(this.webView.getResourceApi());
-        if(null == path){
+        if (null == path) {
             throw new FileNotFoundException();
         }
         File file = new File(path);
         file.getParentFile().mkdirs();
         mFileTransferManager.addFileTranferTask(url, file.getCanonicalPath(),
-                callbackCtx, COMMAND_DOWNLOAD);
+                callbackCtx, COMMAND_DOWNLOAD, webView);
     }
 
     public void upload(String filePath, String server,
@@ -161,11 +161,12 @@ public class AdvancedFileTransfer extends CordovaPlugin {
         }
         // 在此处检测文件是否存在，防止由于文件不存在运行很多不该执行的代码
         XPathResolver pathResolver = new XPathResolver(filePath,
-        		((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
-        String absoluteFilePath = pathResolver.resolve(this.webView.getResourceApi());
+                ((XAppWebView) this.webView).getOwnerApp().getWorkSpace());
+        String absoluteFilePath = pathResolver.resolve(this.webView
+                .getResourceApi());
         if (null != absoluteFilePath) {
             mFileTransferManager.addFileTranferTask(absoluteFilePath, server,
-                callbackCtx, COMMAND_UPLOAD);
+                    callbackCtx, COMMAND_UPLOAD, webView);
         } else {
             throw new FileNotFoundException();
         }

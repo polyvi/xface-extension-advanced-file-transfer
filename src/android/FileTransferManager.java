@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaWebView;
 
 import android.content.Context;
 
@@ -77,11 +78,13 @@ public class FileTransferManager {
      *            回调上下文环境
      * @param commandTtype
      *            传输的类型(上传或下载两种)
+     * @webView
      */
     public void addFileTranferTask(String source, String target,
-            CallbackContext callbackCtx, String commandTtype) {
+            CallbackContext callbackCtx, String commandTtype,
+            CordovaWebView webView) {
         IFileTransfer fileTransfer = getFileTransfer(source, target,
-                commandTtype);
+                commandTtype, webView);
         if (!mHashMapFileTransfers.containsValue(fileTransfer)) {
             mHashMapFileTransfers.put(source, fileTransfer);
         }
@@ -101,16 +104,16 @@ public class FileTransferManager {
      *            当前应用
      * @param commandType
      *            传输的类型(上传或下载两种)
+     * @param webView
      */
     private IFileTransfer getFileTransfer(String source, String target,
-            String commandType) {
+            String commandType, CordovaWebView webView) {
         IFileTransfer fileTransfer = mHashMapFileTransfers.get(source);
         if (fileTransfer == null) {
             if (commandType.equals(COMMAND_DOWNLOAD)) {
                 fileTransfer = new FileDownloader(mContext, source, target,
-                        mFileTransferRecorder, this);
-            }
-            else {
+                        mFileTransferRecorder, this, webView);
+            } else {
                 fileTransfer = new FileUploader(mContext, source, target,
                         mFileTransferRecorder, this);
             }

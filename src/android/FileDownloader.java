@@ -30,7 +30,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import org.apache.cordova.CallbackContext;
+import org.apache.cordova.CordovaWebView;
 import org.apache.cordova.PluginResult;
+import org.apache.cordova.file.FileUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -99,8 +101,10 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
 
     private CookieSyncManager mCookieSyncManager;
 
+    private CordovaWebView mWebView;
+
     public FileDownloader(Context context, String url, String localFilePath,
-            FileTransferRecorder recorder, FileTransferManager manager) {
+            FileTransferRecorder recorder, FileTransferManager manager, CordovaWebView webView) {
         this.mUrl = url;
         this.mLocalFilePath = localFilePath;
         this.mFileTransferManager = manager;
@@ -108,6 +112,7 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
         this.mContext = context;
         this.mCookieSyncManager = CookieSyncManager
                 .createInstance(this.mContext);
+        mWebView = webView;
     }
 
     /**
@@ -282,18 +287,14 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
         JSONObject jsonObj = new JSONObject();
         try {
             File file = new File(mLocalFilePath);
-            jsonObj = new JSONObject();
-            String fileName = null;
-            String fullPath = null;
-            fullPath = file.getAbsolutePath();
-            fileName = file.getName();
-            jsonObj.put("isDirectory", file.isDirectory());
-            jsonObj.put("isFile", file.isFile());
-            jsonObj.put("name", fileName);
-            jsonObj.put("fullPath", fullPath);
-            jsonObj.put("start", 0);
-            jsonObj.put("end", file.length());
-            jsonObj.put("status", "finished");
+            // create FileEntry object
+            FileUtils filePlugin = (FileUtils)mWebView.pluginManager.getPlugin("File");
+            if (filePlugin != null) {
+                jsonObj = filePlugin.getEntryForFile(file);
+                jsonObj.put("start", 0);
+                jsonObj.put("end", file.length());
+                jsonObj.put("status", "finished");
+            }
         } catch (JSONException e) {
             XLog.e(CLASS_NAME, e.getMessage());
         }
@@ -322,13 +323,13 @@ public class FileDownloader implements IFileTransferListener, IFileTransfer {
         JSONObject jsonObj = new JSONObject();
         try {
             File file = new File(mLocalFilePath);
-            String fullPath = file.getAbsolutePath();
-            String fileName = file.getName();
-            jsonObj.put("name", fileName);
-            jsonObj.put("fullPath", fullPath);
-            jsonObj.put("loaded", completeSize);
-            jsonObj.put("total", totalSize);
-            jsonObj.put("status", "unfinished");
+            FileUtils filePlugin = (FileUtils)mWebView.pluginManager.getPlugin("File");
+            if (filePlugin != null) {
+                jsonObj = filePlugin.getEntryForFile(file);
+                jsonObj.put("loaded", completeSize);
+                jsonObj.put("total", totalSize);
+                jsonObj.put("status", "unfinished");
+            }
         } catch (JSONException e) {
             XLog.e(CLASS_NAME, e.getMessage());
         }
