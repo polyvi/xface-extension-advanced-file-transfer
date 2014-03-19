@@ -47,3 +47,13 @@
  *  [Android]Advanced file transfer plugin supports cordova file url 'cdvfile://localhost/<filesystemType>/<path to file>'
  *  [iOS]Invoke file plugin resolveFilePath: method to process file path
  *  Incremented plugin version on dev branch to 1.0.2-dev
+
+
+## 1.0.3 (Wed Mar 19 2014)
+
+
+ *  [Android]Compatible with new file entry object
+ *  Ensure that nativeURL is used by download
+ *  Deleted upload test
+ *  Delete unsupport tests in autotest
+ *  Incremented plugin version on dev branch to 1.0.3-dev
