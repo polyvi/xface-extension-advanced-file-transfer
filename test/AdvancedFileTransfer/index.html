@@ -11,43 +11,51 @@
             console.log(sMsg + sUrl + sLine);
             alert(sMsg);
         }
-      //var source = "http://c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.2%20x64%20Setup.exe";
-      //var target = "/fileloadfile/Sublime.exe";
-      var source = "http://www.polyvi.net:8012/develop/TrafficStats/chmdecoder.zip";
-      var target = "chmdecoder.zip";
+        //var source = "http://c758482.r82.cf2.rackcdn.com/Sublime%20Text%202.0.2%20x64%20Setup.exe";
+        //var target = "/fileloadfile/Sublime.exe";
+        var source = "http://www.polyvi.net:8012/develop/TrafficStats/chmdecoder.zip";
+        var target = "chmdecoder.zip";
 
-      function download(){
-          var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
-        fileTransfer.download(downloadSuccess, downloadFail);
-      };
+        function download(){
+            document.getElementById('status').innerText = "downloading";
+            var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
+            fileTransfer.download(downloadSuccess, downloadFail);
+            fileTransfer.onprogress = function(evt){
+                var progress  = evt.loaded / evt.total;
+                document.getElementById('result').innerText = progress;
+            };
+        };
 
-      function pause(){
-          var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
-        fileTransfer.pause();
-      };
+        function pause(){
+            document.getElementById('status').innerText = "pause";
+            var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
+            fileTransfer.pause();
+        };
 
-      function cancel(){
-          var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
-        fileTransfer.cancel();
-      };
+        function cancel(){
+            document.getElementById('status').innerText = "cancel";
+            document.getElementById('result').innerText = 0;
+            var fileTransfer = new xFace.AdvancedFileTransfer(source, target);
+            fileTransfer.cancel();
+        };
 
-      function downloadSuccess(result){
-        if(result.status == "unfinished"){
-          var res = "completeSize:" + result.loaded;
-          document.getElementById('status').innerText = "downloading";
-          document.getElementById('result').innerText = res;
-        }else{
-          var res = "file: " + result.name + " has been downloaded";
-          document.getElementById('status').innerText = "download successfully";
-          document.getElementById('result').innerText = res;
-        }
-      };
+        function downloadSuccess(result){
+            if(result.status == "unfinished"){
+                var res = "completeSize:" + result.loaded;
+                document.getElementById('status').innerText = "downloading";
+                document.getElementById('result').innerText = res;
+            }else{
+                var res = "file: " + result.name + " has been downloaded";
+                document.getElementById('status').innerText = "download successfully";
+                document.getElementById('result').innerText = res;
+            }
+        };
 
-      function downloadFail(result){
-        var res = "result code " + result.code;
-        document.getElementById('status').innerText = "fail";
-        document.getElementById('result').innerText = res;
-      };
+        function downloadFail(result){
+            var res = "result code " + result.code;
+            document.getElementById('status').innerText = "fail";
+            document.getElementById('result').innerText = res;
+        };
     </script>
   </head>
 
