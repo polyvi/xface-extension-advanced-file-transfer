@@ -53,6 +53,10 @@ public class AdvancedFileTransfer extends CordovaPlugin {
 
     private FileTransferManager mFileTransferManager;
 
+    private interface AdvancedFileTransferOp {
+        void run() throws Exception;
+    }
+
     @Override
     public void initialize(CordovaInterface cordova, CordovaWebView webView) {
         super.initialize(cordova, webView);
@@ -65,58 +69,86 @@ public class AdvancedFileTransfer extends CordovaPlugin {
     }
 
     @Override
-    public boolean execute(String action, JSONArray args,
-            CallbackContext callbackCtx) throws JSONException {
-        String source = null;
-        String target = null;
-        try {
-            if (action.equals(COMMAND_DOWNLOAD)) {
-                source = args.getString(0);
-                target = args.getString(1);
-                download(source, target, callbackCtx, webView);
-                return true;
-            } else if (action.equals(COMMAND_UPLOAD)) {
-                source = args.getString(0);
-                target = args.getString(1);
-                upload(source, target, callbackCtx);
-                return true;
-            } else if (action.equals(COMMAND_PAUSE)) {
-                source = args.getString(0);
-                mFileTransferManager.pause(source);
-                callbackCtx.sendPluginResult(new PluginResult(
-                        PluginResult.Status.OK));
-                return true;
-            } else if (action.equals(COMMAND_CANCEL)) {
-                source = args.getString(0);
-                target = args.getString(1);
-                mFileTransferManager.cancel(source, target, callbackCtx,
-                        COMMAND_DOWNLOAD);
-                return true;
-            }
-        } catch (FileNotFoundException e) {
-            JSONObject error = createFileTransferError(FILE_NOT_FOUND_ERR,
-                    source, target);
-            callbackCtx.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, error));
-            XLog.e(CLASS_NAME, e.getMessage());
-        } catch (IllegalArgumentException e) {
-            JSONObject error = createFileTransferError(INVALID_URL_ERR, source,
-                    target);
-            callbackCtx.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, error));
-            XLog.e(CLASS_NAME, e.getMessage());
-        } catch (IOException e) {
-            JSONObject error = createFileTransferError(CONNECTION_ERR, source,
-                    target);
-            callbackCtx.sendPluginResult(new PluginResult(
-                    PluginResult.Status.ERROR, error));
-            XLog.e(CLASS_NAME, e.getMessage());
-        } catch (JSONException e) {
-            callbackCtx.sendPluginResult(new PluginResult(
-                    PluginResult.Status.JSON_EXCEPTION));
-            XLog.e(CLASS_NAME, e.getMessage(), e);
+    public boolean execute(String action, final JSONArray args,
+            final CallbackContext callbackCtx) throws JSONException {
+        if (action.equals(COMMAND_DOWNLOAD)) {
+            threadhelper(new AdvancedFileTransferOp() {
+
+                @Override
+                public void run() throws Exception {
+                    download(args.getString(0), args.getString(1), callbackCtx,
+                            webView);
+                }
+            }, callbackCtx, args.getString(0), args.getString(1));
+        } else if (action.equals(COMMAND_UPLOAD)) {
+            threadhelper(new AdvancedFileTransferOp() {
+
+                @Override
+                public void run() throws Exception {
+                    upload(args.getString(0), args.getString(1), callbackCtx);
+                }
+            }, callbackCtx, args.getString(0), args.getString(1));
+        } else if (action.equals(COMMAND_PAUSE)) {
+            threadhelper(new AdvancedFileTransferOp() {
+
+                @Override
+                public void run() throws Exception {
+                    mFileTransferManager.pause(args.getString(0));
+                }
+            }, callbackCtx, args.getString(0), "");
+        } else if (action.equals(COMMAND_CANCEL)) {
+            threadhelper(new AdvancedFileTransferOp() {
+
+                @Override
+                public void run() throws Exception {
+                    mFileTransferManager.cancel(args.getString(0),
+                            args.getString(1), callbackCtx, COMMAND_DOWNLOAD);
+                }
+            }, callbackCtx, args.getString(0), args.getString(1));
+        } else {
+            return false;
         }
-        return false;
+        return true;
+    }
+
+    /**
+     * 异步执行扩展功能，并处理结果
+     *
+     * @param transferOp
+     * @param callbackContext
+     * @param action
+     */
+    private void threadhelper(final AdvancedFileTransferOp transferOp,
+            final CallbackContext callbackContext, final String source,
+            final String target) {
+        cordova.getThreadPool().execute(new Runnable() {
+            public void run() {
+                try {
+                    transferOp.run();
+                } catch (Exception e) {
+                    XLog.e(CLASS_NAME, e.getMessage());
+                    e.printStackTrace();
+                    if (e instanceof FileNotFoundException) {
+                        JSONObject error = createFileTransferError(
+                                FILE_NOT_FOUND_ERR, source, target);
+                        callbackContext.error(error);
+                    } else if (e instanceof IllegalArgumentException) {
+                        JSONObject error = createFileTransferError(
+                                INVALID_URL_ERR, source, target);
+                        callbackContext.error(error);
+                    } else if (e instanceof JSONException) {
+                        callbackContext.sendPluginResult(new PluginResult(
+                                PluginResult.Status.JSON_EXCEPTION));
+                    } else if (e instanceof IOException) {
+                        JSONObject error = createFileTransferError(
+                                CONNECTION_ERR, source, target);
+                        callbackContext.error(error);
+                    } else {
+                        callbackContext.error("Unknown Error");
+                    }
+                }
+            }
+        });
     }
 
     /**
