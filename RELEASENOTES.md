@@ -57,3 +57,11 @@
  *  Deleted upload test
  *  Delete unsupport tests in autotest
  *  Incremented plugin version on dev branch to 1.0.3-dev
+
+
+## 1.0.4 (Thu Apr 03 2014)
+
+
+ *  [Android]Fix network on mainThread exception in Android 4.0 version or above
+ *  Update test page
+ *  Incremented plugin version on dev branch to 1.0.4-dev
